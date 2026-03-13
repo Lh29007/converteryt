@@ -1,0 +1,147 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convertisseur YouTube</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Reset basique */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+    }
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    main {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    input[type="text"] {
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+    button {
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #ff416c;
+      background: linear-gradient(90deg, #ff416c, #ff4b2b);
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .info {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 500px) {
+      header h1 { font-size: 2rem; }
+      main { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎵 Convertisseur YouTube</h1>
+    <p>Transforme tes vidéos YouTube en fichiers MP3 instantanément !</p>
+  </header>
+
+  <main>
+    <form id="convertForm">
+      <input type="text" id="youtubeUrl" placeholder="Colle ici le lien YouTube..." required>
+      <button type="submit">Convertir en MP3</button>
+    </form>
+    <div class="info">
+      <p><strong>Comment ça marche ?</strong></p>
+      <ul>
+        <li>Colle le lien de la vidéo YouTube que tu veux convertir.</li>
+        <li>Clique sur "Convertir en MP3".</li>
+        <li>Le serveur récupère la vidéo et extrait l’audio.</li>
+        <li>Le fichier MP3 est téléchargé automatiquement.</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 BotGuard Convertisseur YouTube
+  </footer>
+
+  <script>
+    const form = document.getElementById('convertForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = document.getElementById('youtubeUrl').value;
+      if (!url) return alert('Merci de coller un lien YouTube.');
+
+      try {
+        const response = await fetch(`/download?url=${encodeURIComponent(url)}`);
+        if (!response.ok) throw new Error('Erreur de conversion');
+
+        const blob = await response.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'audio.mp3';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (err) {
+        alert('Impossible de convertir la vidéo. Vérifie le lien.');
+      }
+    });
+  </script>
+</body>
+</html>
